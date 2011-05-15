@@ -29,9 +29,13 @@ $hosts[] = 'test.mine.nu';
 function ddns_get_ipaddress()
 {
 	$content = file_get_contents('http://checkip.dyndns.com');
-	$content = strip_tags($content);
-	$content = substr($content, strpos($content, ': ') + 2);
-	return $content;
+
+	$matched = $content !== FALSE && (bool)preg_match('/\d*\.\d*\.\d*\.\d*/', $content, $matches);
+
+	if ($matched)
+		return $matches[0];
+	else
+		return FALSE;
 }
 
 function ddns_resolve_host($host)
