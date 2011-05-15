@@ -22,6 +22,10 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+$user = 'test';
+$pass = 'test';
+$hosts[] = 'test.mine.nu';
+
 function ddns_get_ipaddress()
 {
 	$content = file_get_contents('http://checkip.dyndns.com');
@@ -44,3 +48,29 @@ function ddns_resolve_host($host)
 
 	return $result;
 }
+
+function ddns_update_host($host, $newIP)
+{
+	global $user, $pass;
+
+	$url = 'http://#user#:#pass#@members.dyndns.org/nic/update?hostname=#host#&myip=#ip#';
+	$url = str_replace('#user#', $user, $url);
+	$url = str_replace('#pass#', $pass, $url);
+	$url = str_replace('#host#', $host, $url);
+	$url = str_replace('#ip#', $newIP, $url);
+
+	$opts = array('http' => array('user_agent' => 'php-ddns-client 0.1'));
+	$context = stream_context_create($opts);
+
+	$content = file_get_contents($url, false, $context);
+
+	$matched = $content !== FALSE && (bool)preg_match('/^\w*/', $content, $matches);
+
+	if ($matched === FALSE)
+		return FALSE;
+
+	$result = strtolower($matches[0]);
+
+	return $result == 'good';
+}
+
