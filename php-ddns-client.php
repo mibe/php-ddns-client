@@ -25,10 +25,11 @@
 $user = 'test';
 $pass = 'test';
 $hosts[] = 'test.mine.nu';
+$force = FALSE;
 
 function ddns_get_ipaddress()
 {
-	$content = file_get_contents('http://checkip.dyndns.com');
+	$content = @file_get_contents('http://checkip.dyndns.com');
 
 	$matched = $content !== FALSE && (bool)preg_match('/\d*\.\d*\.\d*\.\d*/', $content, $matches);
 
@@ -78,3 +79,36 @@ function ddns_update_host($host, $newIP)
 	return $result == 'good';
 }
 
+function ddns_error($message, $die = TRUE)
+{
+	header('HTTP/1.0 500 Internal Server Error');
+	print $message;
+
+	if ($die)
+		die();
+}
+
+header('Content-Type: text/plain');
+
+$currentIP = ddns_get_ipaddress();
+
+if ($currentIP === FALSE)
+	ddns_error('Could not detect external IP address.');
+
+foreach($hosts as $host)
+{
+	print 'Updating \'' . $host . '\': ';
+
+	$oldIPs = ddns_resolve_host($host);
+
+	if (!in_array($currentIP, $oldIPs, TRUE) || $force)
+	{
+		$result = ddns_update_host($host, $currentIP);
+
+		print $result ? 'success' : 'failed!';
+	}
+	else
+		print 'not neccessary';
+
+	print PHP_EOL;
+}
