@@ -99,9 +99,10 @@ foreach($hosts as $host)
 {
 	print 'Updating \'' . $host . '\': ';
 
-	$oldIPs = ddns_resolve_host($host);
+	if (!$force)
+		$oldIPs = ddns_resolve_host($host);
 
-	if (!in_array($currentIP, $oldIPs, TRUE) || $force)
+	if ($force || !in_array($currentIP, $oldIPs, TRUE))
 	{
 		$result = ddns_update_host($host, $currentIP);
 
