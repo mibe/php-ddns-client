@@ -5,7 +5,6 @@
  * provider.
  */
 
-
 /*
  * Copyright (C) 2011 Michael Bemmerl
  *
@@ -22,10 +21,17 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-$user = 'test';
-$pass = 'test';
-$hosts[] = 'test.mine.nu';
-$force = FALSE;
+/* Start of configuration area */
+
+$user = 'test';								// Your DDNS username
+$pass = 'test';								// Your DDNS password
+
+$hosts[] = 'test.mine.nu';					// The hosts you want to update
+//$hosts[] = 'another-host.dyndns.org';
+
+$force = FALSE;								// Set to TRUE if you want to force an update
+
+/* End of configuration area */
 
 function ddns_get_ipaddress()
 {
