@@ -64,11 +64,7 @@ function ddns_update_host($host, $newIP)
 {
 	global $user, $pass;
 
-	$url = 'http://#user#:#pass#@members.dyndns.org/nic/update?hostname=#host#&myip=#ip#';
-	$url = str_replace('#user#', $user, $url);
-	$url = str_replace('#pass#', $pass, $url);
-	$url = str_replace('#host#', $host, $url);
-	$url = str_replace('#ip#', $newIP, $url);
+	$url = sprintf('http://%s:%s@members.dyndns.org/nic/update?hostname=%s&myip=%s', $user, $pass, $host, $newIP);
 
 	$opts = array('http' => array('user_agent' => 'php-ddns-client 0.1'));
 	$context = stream_context_create($opts);
